@@ -1,0 +1,27 @@
+from textblob import TextBlob
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+def analyze_sentiment(text):
+    blob = TextBlob(text)
+    sentiment = blob.sentiment.polarity
+    if sentiment > 0:
+        return "positive"
+    elif sentiment < 0:
+        return "negative"
+    else:
+        return "neutral"
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_input = request.json['message']
+    sentiment = analyze_sentiment(user_input)
+    response = {
+        "message": "Thank you for your message.",
+        "sentiment": sentiment
+    }
+    return jsonify(response)
+
+if __name__ == '__main__':
+    app.run(debug=True)
